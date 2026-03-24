@@ -4,7 +4,7 @@ import {
   Menu, X, ArrowRight, 
   Film, Scissors, Box, Zap, 
   Hexagon, Layout, Instagram, 
-  Linkedin, Video, MapPin, 
+  Linkedin, MapPin, 
   Mail, CheckCircle2 
 } from 'lucide-react';
 
@@ -139,7 +139,7 @@ const Navbar = () => {
                 <a href="mailto:hello@brightcut.media" className="text-white hover:text-cyan-400 transition-colors">
                   <Mail size={24} />
                 </a>
-                <a href="#" className="text-white hover:text-cyan-400 transition-colors">
+                <a href="https://www.instagram.com/brightcut_media" target="_blank" rel="noopener noreferrer" className="text-white hover:text-cyan-400 transition-colors">
                   <Instagram size={24} />
                 </a>
                 <a href="https://www.linkedin.com/company/brightcut-media" target="_blank" rel="noopener noreferrer" className="text-white hover:text-cyan-400 transition-colors">
@@ -573,9 +573,8 @@ const Contact = () => {
 
             <div className="flex gap-4">
               {[
-                { Icon: Instagram, href: "#" },
-                { Icon: Linkedin, href: "https://www.linkedin.com/company/brightcut-media" },
-                { Icon: Video, href: "#" }
+                { Icon: Instagram, href: "https://www.instagram.com/brightcut_media" },
+                { Icon: Linkedin, href: "https://www.linkedin.com/company/brightcut-media" }
               ].map((social, i) => (
                 <a 
                   key={i} 
