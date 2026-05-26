@@ -220,7 +220,7 @@ const Hero = () => {
 };
 
 const TrustBar = () => {
-  const clients = ["Momentum", "Cricket South Africa", "La Roche Posay", "Sade Savings", "Geely", "South African Breweries", "Assore", "Ukhuni Business Furniture", "Jasper & Jude"];
+  const clients = ["Momentum", "Cricket South Africa", "La Roche Posay", "Coached by Sade", "Geely", "South African Breweries", "Assore", "Ukhuni Business Furniture", "Jasper & Jude", "Coca-Cola", "Styled Africa"];
   return (
     <a href="#clients" className="block group bg-bg border-y border-white/5 py-12 overflow-hidden marquee-mask hover:bg-white/[0.02] transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-6 mb-8 text-center">
@@ -414,8 +414,9 @@ const Showreel = () => {
 const Clients = () => {
   const clients = [
     "Momentum", "Cricket South Africa", "La Roche Posay", 
-    "Sade Savings", "Geely", "South African Breweries", 
-    "Assore", "Ukhuni Business Furniture", "Jasper & Jude"
+    "Coached by Sade", "Geely", "South African Breweries", 
+    "Assore", "Ukhuni Business Furniture", "Jasper & Jude",
+    "Coca-Cola", "Styled Africa"
   ];
 
   return (
