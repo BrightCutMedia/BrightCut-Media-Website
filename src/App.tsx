@@ -259,7 +259,10 @@ const About = () => {
               BrightCut Media combines cinematic craftsmanship with AI-powered production workflows. Our hybrid studio model blends traditional film production, high-end post-production, and advanced AI-assisted creative processes.
             </p>
             <p>
-              From brand films and commercial campaigns to rapid digital content production, we help organisations communicate their message with clarity, precision, and lasting impact.
+              We complement our video production with professional graphic design services, crafting cohesive brand identities, visual standards, and stunning digital collateral that capture attention across print and web.
+            </p>
+            <p>
+              From brand films and commercial campaigns to rapid digital content and custom branding assets, we help organisations communicate their message with clarity, precision, and lasting impact.
             </p>
           </div>
           <div className="mt-8 w-16 h-[2px] bg-gradient-spectrum mb-10"></div>
@@ -317,9 +320,9 @@ const Services = () => {
       gradient: "from-emerald-400 to-yellow-400"
     },
     {
-      title: "Motion Graphics & Logo Design",
+      title: "Motion Graphics, Logo & Graphic Design",
       icon: <Layout size={32} />,
-      desc: "2D animation, explainer videos, logo animation, and brand identity motion design. We bring your visual identity to life — frame by frame, with purpose and style.",
+      desc: "2D animation, explainer videos, logo animation, brand identity, and custom graphic design services. We bring your visual identity to life — digital or print, frame by frame, with purpose and style.",
       gradient: "from-yellow-400 to-orange-400"
     },
     {
@@ -620,7 +623,7 @@ const Footer = () => {
               ))}
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {["Film Production", "Post-Production", "Motion Graphics", "AI Production", "Web Design", "Digital Products"].map(s => (
+              {["Film Production", "Post-Production", "Motion & Graphic Design", "AI Production", "Web Design", "Digital Products"].map(s => (
                 <span key={s} className="text-[10px] text-zinc-700 uppercase tracking-widest">{s}</span>
               ))}
             </div>
