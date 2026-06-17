@@ -5,7 +5,7 @@ import {
   Film, Scissors, Box, Zap, 
   Hexagon, Layout, Instagram, 
   Linkedin, MapPin, 
-  Mail, CheckCircle2 
+  Mail, CheckCircle2, Play
 } from 'lucide-react';
 
 // --- Components ---
@@ -415,12 +415,73 @@ const Showreel = () => {
 };
 
 const Clients = () => {
-  const clients = [
-    "Momentum", "Cricket South Africa", "La Roche Posay", 
-    "Coached by Sade", "Geely", "South African Breweries", 
-    "Assore", "Ukhuni Business Furniture", "Jasper & Jude",
-    "Coca-Cola", "Styled Africa"
+  const [selectedProject, setSelectedProject] = useState<{
+    name: string;
+    videoUrl: string;
+    tag: string;
+    desc: string;
+  } | null>(null);
+
+  const clientProjects = [
+    {
+      name: "Coca-Cola",
+      videoUrl: "https://player.vimeo.com/video/1202110463?badge=0&autopause=0&autoplay=1",
+      tag: "Seasonal Campaign",
+      desc: "Bright, engaging, and dynamic digital assets produced for nationwide social distribution."
+    },
+    {
+      name: "Geely",
+      videoUrl: "https://www.youtube.com/embed/wbBBF0GVobw?autoplay=1&mute=0",
+      tag: "Automotive Launch",
+      desc: "Cinematic reveal and launch videos showcasing precision-engineered electric SUVs."
+    },
+    {
+      name: "Jasper & Jude",
+      videoUrl: "https://player.vimeo.com/video/1202123469?badge=0&autopause=0&autoplay=1",
+      tag: "Cinematic Narrative",
+      desc: "A premium lifestyle campaign and cinematic editorial lookbook presenting luxury stories."
+    },
+    {
+      name: "Assore",
+      videoUrl: "https://player.vimeo.com/video/1202115588?badge=0&autopause=0&autoplay=1",
+      tag: "Industrial Overview",
+      desc: "A bold corporate overview showcasing minerals, high-end infrastructure, and logistics operations."
+    },
+    {
+      name: "Maybelline",
+      videoUrl: "https://player.vimeo.com/video/1202126646?badge=0&autopause=0&autoplay=1",
+      tag: "Product Commercial",
+      desc: "Clean, elegant, and modern product showcase capturing makeup artistry, aesthetics, and beauty trends."
+    },
+    {
+      name: "Momentum"
+    },
+    {
+      name: "Cricket South Africa"
+    },
+    {
+      name: "Coached by Sade"
+    },
+    {
+      name: "South African Breweries"
+    },
+    {
+      name: "Ukhuni Business Furniture"
+    },
+    {
+      name: "Styled Africa"
+    }
   ];
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedProject(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <section id="clients" className="py-32 bg-bg relative overflow-hidden">
@@ -431,24 +492,46 @@ const Clients = () => {
             <span className="font-display font-semibold text-[10px] tracking-widest text-gradient uppercase">Our Partners</span>
           </div>
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white mb-6">Trusted by Industry Leaders</h2>
-          <p className="font-sans text-zinc-400 text-lg">We've had the privilege of collaborating with some of the most respected brands and organizations across the globe.</p>
+          <p className="font-sans text-zinc-400 text-lg">
+            We've had the privilege of collaborating with some of the most respected brands in the world. Click any featured brand to play their video showcase.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {clients.map((client, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="glass-card p-8 rounded-2xl flex items-center justify-center text-center group hover:border-white/20 transition-all duration-300"
-            >
-              <span className="font-display font-bold text-lg md:text-xl text-zinc-500 group-hover:text-white transition-colors duration-300">
-                {client}
-              </span>
-            </motion.div>
-          ))}
+          {clientProjects.map((project, i) => {
+            const isPlayable = !!project.videoUrl;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                onClick={() => isPlayable && setSelectedProject(project as any)}
+                className={`glass-card p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden h-32 border border-white/5 transition-all duration-300 ${
+                  isPlayable
+                    ? "group cursor-pointer hover:border-cyan-500/30 hover:bg-white/[0.04]"
+                    : "cursor-default opacity-50 hover:border-white/10"
+                }`}
+              >
+                {isPlayable && (
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Play size={14} className="text-cyan-400 fill-cyan-400/20" />
+                  </div>
+                )}
+                <span className={`font-display font-bold text-lg md:text-xl transition-colors duration-300 ${
+                  isPlayable ? "text-zinc-400 group-hover:text-white" : "text-zinc-500"
+                }`}>
+                  {project.name}
+                </span>
+                {isPlayable && (
+                  <span className="mt-2 text-[10px] font-sans font-semibold tracking-wider text-zinc-600 group-hover:text-cyan-400 uppercase transition-colors duration-300">
+                    Play Showcase
+                  </span>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
 
         <div className="mt-20 p-12 rounded-[32px] border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent text-center">
@@ -458,6 +541,67 @@ const Clients = () => {
           <div className="w-12 h-[2px] bg-gradient-spectrum mx-auto"></div>
         </div>
       </div>
+
+      {/* Lightbox Video Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="relative w-full max-w-4xl rounded-2xl bg-[#0d0d0d] border border-white/10 overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Core Close Button */}
+              <button
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-4 right-4 z-50 rounded-full bg-black/60 p-2 text-white hover:bg-white hover:text-black transition-all"
+                aria-label="Close modal"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Aspect Ratio Controlled Video Frame */}
+              <div className="aspect-video w-full bg-black relative">
+                <iframe
+                  src={selectedProject.videoUrl}
+                  className="absolute top-0 left-0 w-full h-full"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                  title={`${selectedProject.name} Project Showcase`}
+                ></iframe>
+              </div>
+
+              {/* Informational Slate below active video */}
+              <div className="p-6 md:p-8 border-t border-white/5 bg-gradient-to-b from-[#121212] to-[#0d0d0d]">
+                <div className="flex flex-wrap items-center gap-3 mb-3">
+                  <span className="text-xs font-display font-bold px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full uppercase tracking-widest">
+                    {selectedProject.tag}
+                  </span>
+                  <span className="text-xs font-sans text-zinc-500 uppercase tracking-widest">
+                    Case Study
+                  </span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-display font-extrabold text-white mb-3">
+                  {selectedProject.name}
+                </h3>
+                <p className="font-sans text-zinc-400 text-sm md:text-base leading-relaxed">
+                  {selectedProject.desc}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
