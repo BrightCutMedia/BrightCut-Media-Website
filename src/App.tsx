@@ -163,11 +163,32 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-20 overflow-hidden mesh-gradient">
+    <section id="home" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-black">
+      {/* Background Video Loop - Pulls from the showreel vimeo link as requested in visual improvements */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden -z-20 pointer-events-none opacity-[0.22]">
+        <iframe
+          src="https://player.vimeo.com/video/1175155329?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&playsinline=1"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style={{
+            width: '115vw',
+            height: '64.68vw', // 16:9 ratio
+            minHeight: '100vh',
+            minWidth: '177.77vh',
+            transform: 'translate(-50%, -50%) scale(1.15)'
+          }}
+          frameBorder="0"
+          allow="autoplay; fullscreen"
+          title="Background Reel"
+        ></iframe>
+        {/* Dark Vignettes & Gradients to blend video smoothly */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-bg/40"></div>
+      </div>
+
       {/* Background Glow */}
       <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-gradient-to-bl from-cyan-500/10 via-emerald-500/5 to-transparent blur-[120px] -z-10"></div>
       
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center w-full">
+      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center w-full relative z-10">
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -179,8 +200,8 @@ const Hero = () => {
             <span className="text-gradient">Storytelling.</span> <br />
             <span className="text-white/40 text-[0.7em]">Intelligent Production.</span>
           </h1>
-          <p className="font-sans font-light text-zinc-400 text-lg leading-relaxed max-w-md mb-10">
-            We partner with brands, corporations, and advertising agencies to produce visually striking content designed for today's fast-moving digital landscape.
+          <p className="font-sans font-light text-zinc-400 text-lg leading-relaxed max-w-lg mb-10">
+            We partner with brands and agencies to produce visually striking content built for today's digital landscape.
           </p>
           
           <div className="flex flex-wrap gap-4 items-center">
@@ -220,15 +241,18 @@ const Hero = () => {
 };
 
 const TrustBar = () => {
-  const clients = ["Momentum", "Cricket South Africa", "La Roche Posay", "Coached by Sade", "Geely", "South African Breweries", "Assore", "Ukhuni Business Furniture", "Jasper & Jude", "Coca-Cola", "Styled Africa"];
+  const clients = ["Momentum", "Cricket South Africa", "Maybelline", "Coached by Sade", "Geely", "South African Breweries", "Assore", "Ukhuni Business Furniture", "Jasper & Jude", "Coca-Cola", "Styled Africa", "Nedbank"];
   return (
-    <a href="#clients" className="block group bg-bg border-y border-white/5 py-12 overflow-hidden marquee-mask hover:bg-white/[0.02] transition-colors duration-500">
-      <div className="max-w-7xl mx-auto px-6 mb-8 text-center">
-        <span className="font-display font-semibold text-[10px] tracking-[0.3em] text-zinc-500 uppercase group-hover:text-cyan-400 transition-colors">Trusted By</span>
+    <a href="#clients" className="block group bg-bg border-y border-white/5 py-16 overflow-hidden marquee-mask hover:bg-white/[0.01] transition-colors duration-500">
+      <div className="max-w-7xl mx-auto px-6 mb-10 text-center">
+        <span className="font-display font-semibold text-[10px] tracking-[0.3em] text-zinc-500 uppercase group-hover:text-cyan-400 transition-colors">Our Partners</span>
       </div>
-      <div className="flex whitespace-nowrap animate-marquee w-max">
+      <div className="flex whitespace-nowrap animate-marquee w-max select-none">
         {[...clients, ...clients].map((client, i) => (
-          <span key={i} className="font-display font-bold text-2xl text-zinc-700 mx-12 group-hover:text-zinc-400 transition-colors flex-shrink-0">
+          <span 
+            key={i} 
+            className="font-display font-black text-3xl md:text-5xl tracking-tight text-zinc-800 mx-16 group-hover:text-zinc-600 hover:!text-white hover:scale-105 transition-all duration-500 flex-shrink-0"
+          >
             {client}
           </span>
         ))}
@@ -237,9 +261,44 @@ const TrustBar = () => {
   );
 };
 
+const Counter = ({ value, suffix = "" }: { value: string; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const target = parseFloat(value);
+  const isNumeric = !isNaN(target);
+
+  useEffect(() => {
+    if (!isNumeric) return;
+    let start = 0;
+    const duration = 2000;
+    const startTime = performance.now();
+    let animationFrameId: number;
+
+    const updateCount = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // easeOutCubic
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(easeProgress * target));
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(updateCount);
+      } else {
+        setCount(target);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(updateCount);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [target, isNumeric]);
+
+  if (!isNumeric) return <span>{value}</span>;
+  return <span>{count}{suffix}</span>;
+};
+
 const About = () => {
   return (
-    <section id="about" className="bg-bg-alt py-32 slash-mask relative overflow-hidden">
+    <section id="about" className="bg-bg-alt py-32 md:py-44 slash-mask relative overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0,transparent_70%)]"></div>
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-[1.2fr_1fr] gap-20 items-center relative z-10">
         <motion.div
@@ -254,25 +313,59 @@ const About = () => {
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white leading-tight mb-8">
             A Modern Studio Built for the Future of Brand Storytelling
           </h2>
-          <div className="space-y-6 font-sans text-zinc-400 leading-relaxed text-lg">
+          <div className="space-y-6 font-sans text-zinc-300 leading-relaxed text-lg">
             <p>
-              BrightCut Media combines cinematic craftsmanship with AI-powered production workflows. Our hybrid studio model blends traditional film production, high-end post-production, and advanced AI-assisted creative processes.
+              BrightCut Media blends cinematic craftsmanship with AI-powered production — covering everything from brand films and campaigns to graphic design and digital content.
             </p>
             <p>
-              We complement our video production with professional graphic design services, crafting cohesive brand identities, visual standards, and stunning digital collateral that capture attention across print and web.
-            </p>
-            <p>
-              From brand films and commercial campaigns to rapid digital content and custom branding assets, we help organisations communicate their message with clarity, precision, and lasting impact.
+              We help organisations communicate with clarity, precision, and lasting impact.
             </p>
           </div>
           <div className="mt-8 w-16 h-[2px] bg-gradient-spectrum mb-10"></div>
           
           <div className="flex flex-wrap gap-3">
             {["Precision", "Innovation", "Clarity", "Confidence", "Modern Luxury"].map(val => (
-              <div key={val} className="px-5 py-2 rounded-full border border-white/10 bg-white/5 font-display font-semibold text-[10px] text-zinc-300 uppercase">
+              <div key={val} className="px-5 py-2 rounded-full border border-white/10 bg-white/5 font-display font-semibold text-[10px] text-zinc-400 uppercase">
                 {val}
               </div>
             ))}
+          </div>
+
+          {/* Behind-The-Scenes high-quality realistic production stills */}
+          <div className="mt-12 grid grid-cols-3 gap-4">
+            <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/10 group bg-black">
+              <img 
+                src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=400&q=80" 
+                alt="Professional Cinema Camera" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex items-end p-3 pointer-events-none">
+                <span className="font-display font-bold text-[8px] uppercase tracking-widest text-cyan-400">On Set</span>
+              </div>
+            </div>
+            <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/10 group bg-black">
+              <img 
+                src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=400&q=80" 
+                alt="Video Editing Timeline" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex items-end p-3 pointer-events-none">
+                <span className="font-display font-bold text-[8px] uppercase tracking-widest text-emerald-400">Editorial</span>
+              </div>
+            </div>
+            <div className="relative rounded-2xl overflow-hidden aspect-video border border-white/10 group bg-black">
+              <img 
+                src="https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?auto=format&fit=crop&w=400&q=80" 
+                alt="Chroma Key Greenscreen Studio" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex items-end p-3 pointer-events-none">
+                <span className="font-display font-bold text-[8px] uppercase tracking-widest text-yellow-500">Studio</span>
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -281,18 +374,24 @@ const About = () => {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="glass-card rounded-[32px] p-10 shadow-2xl relative overflow-hidden"
+          className="glass-card rounded-[32px] p-10 shadow-2xl relative overflow-hidden border border-white/5"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-spectrum"></div>
           <div className="grid grid-cols-2 gap-10">
             {[
-              { label: "5+", sub: "Major Brand Clients" },
-              { label: "6", sub: "Creative Service Pillars" },
-              { label: "AI", sub: "Powered Workflows" },
-              { label: "Global", sub: "Reach from Joburg" }
+              { val: "Trusted", suffix: "", sub: "by industry leaders" },
+              { val: "6", suffix: "", sub: "Creative Service Pillars" },
+              { val: "AI", suffix: "", sub: "Powered Workflows" },
+              { val: "Global", suffix: "", sub: "Reach from Joburg" }
             ].map((stat, i) => (
               <div key={i} className="space-y-2">
-                <div className="font-display font-extrabold text-4xl text-white">{stat.label}</div>
+                <div className="font-display font-extrabold text-4xl text-white">
+                  {isNaN(parseFloat(stat.val)) ? (
+                    stat.val
+                  ) : (
+                    <Counter value={stat.val} suffix={stat.suffix} />
+                  )}
+                </div>
                 <div className="font-sans text-xs text-zinc-500 uppercase tracking-wider">{stat.sub}</div>
               </div>
             ))}
@@ -310,43 +409,49 @@ const Services = () => {
     {
       title: "Traditional Film Production",
       icon: <Film size={32} />,
-      desc: "Brand films, corporate storytelling, promotional campaigns, event coverage, and social media video production. Cinematic quality crafted for brands that refuse to compromise.",
-      gradient: "from-cyan-400 to-emerald-400"
+      desc: "Brand films, corporate storytelling, campaigns, and event coverage. Cinematic quality for brands that refuse to compromise.",
+      gradient: "from-cyan-400 to-emerald-400",
+      imageUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=600&q=80"
     },
     {
       title: "Post-Production & Editing",
       icon: <Scissors size={32} />,
-      desc: "Precision-driven editing, colour grading, sound design, and commercial finishing. Every cut is intentional. Every frame is perfected for modern digital platforms.",
-      gradient: "from-emerald-400 to-yellow-400"
+      desc: "Precision editing, colour grading, sound design, and commercial finishing. Every cut intentional. Every frame perfected.",
+      gradient: "from-emerald-400 to-yellow-400",
+      imageUrl: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80"
     },
     {
       title: "Motion Graphics, Logo & Graphic Design",
       icon: <Layout size={32} />,
-      desc: "2D animation, explainer videos, logo animation, brand identity, and custom graphic design services. We bring your visual identity to life — digital or print, frame by frame, with purpose and style.",
-      gradient: "from-yellow-400 to-orange-400"
+      desc: "2D animation, logo animation, brand identity, and graphic design. Your visual identity — brought to life.",
+      gradient: "from-yellow-400 to-orange-400",
+      imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80"
     },
     {
       title: "AI-Powered Content Production",
       icon: <Zap size={32} />,
-      desc: "We produce high-quality AI-generated content, photorealistic imagery, and intelligent creative assets. Our workflows leverage advanced AI to accelerate production while delivering premium visual results that push the boundaries of digital storytelling.",
-      gradient: "from-orange-400 to-red-500"
+      desc: "High-quality AI-generated imagery and intelligent creative assets. Premium results at production speed.",
+      gradient: "from-orange-400 to-red-500",
+      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80"
     },
     {
       title: "Website Design & Development",
       icon: <Hexagon size={32} />,
-      desc: "Modern, high-performance websites and digital platforms built to represent your brand at its best — from sleek portfolio sites to full e-commerce experiences.",
-      gradient: "from-red-500 to-purple-500"
+      desc: "Modern, high-performance websites built to represent your brand at its best.",
+      gradient: "from-red-500 to-purple-500",
+      imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80"
     },
     {
       title: "Digital Products",
       icon: <Box size={32} />,
-      desc: "Custom digital tools, branded templates, digital asset packs, and interactive digital experiences built specifically for brands. Scalable, on-brand, and ready to deploy.",
-      gradient: "bg-gradient-spectrum"
+      desc: "Branded templates, digital asset packs, and interactive experiences. Scalable, on-brand, ready to deploy.",
+      gradient: "bg-gradient-spectrum",
+      imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80"
     }
   ];
 
   return (
-    <section id="services" className="py-32 bg-bg slash-mask-reverse relative overflow-hidden">
+    <section id="services" className="py-32 md:py-44 bg-bg slash-mask-reverse relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(6,182,212,0.05)_0,transparent_50%)]"></div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-20">
@@ -354,7 +459,7 @@ const Services = () => {
             <span className="font-display font-semibold text-[10px] tracking-widest text-gradient uppercase">What We Do</span>
           </div>
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white mb-6">Our Capabilities</h2>
-          <p className="font-sans text-zinc-400 text-lg">Six creative disciplines. One seamless studio. From first concept to final delivery.</p>
+          <p className="font-sans text-zinc-400 text-lg">Six creative disciplines. One seamless studio.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -365,14 +470,28 @@ const Services = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group glass-card p-10 rounded-[24px] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative overflow-hidden"
+              className="group glass-card p-10 rounded-[24px] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative overflow-hidden border border-white/5"
             >
-              <div className={`absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r ${s.gradient} group-hover:h-full group-hover:opacity-[0.05] transition-all duration-500`}></div>
-              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white mb-8 group-hover:scale-110 transition-transform duration-500">
-                {s.icon}
+              {/* Cover Hover Behind Image */}
+              <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-[0.14] transition-opacity duration-700 pointer-events-none">
+                <img 
+                  src={s.imageUrl} 
+                  alt="" 
+                  className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700" 
+                  referrerPolicy="no-referrer"
+                />
               </div>
-              <h3 className="font-display font-bold text-xl text-white mb-4">{s.title}</h3>
-              <p className="font-sans text-zinc-400 text-sm leading-relaxed">{s.desc}</p>
+
+              {/* Edge highlight line */}
+              <div className={`absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r ${s.gradient} group-hover:h-full group-hover:opacity-[0.03] transition-all duration-500 z-10`}></div>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white mb-8 group-hover:scale-110 group-hover:border-cyan-500/30 transition-all duration-500">
+                  {s.icon}
+                </div>
+                <h3 className="font-display font-bold text-xl text-white mb-4 group-hover:text-cyan-400 transition-colors duration-300">{s.title}</h3>
+                <p className="font-sans text-zinc-400 text-sm leading-relaxed group-hover:text-zinc-300 transition-colors duration-300">{s.desc}</p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -382,8 +501,10 @@ const Services = () => {
 };
 
 const Showreel = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
   return (
-    <section id="showreel" className="bg-bg py-32 slash-mask relative overflow-hidden">
+    <section id="showreel" className="bg-bg py-32 md:py-44 slash-mask relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="font-display font-semibold text-[10px] tracking-widest text-gradient uppercase mb-6 block">Our Work</span>
@@ -391,24 +512,65 @@ const Showreel = () => {
             Every Frame Has Intention. <br />
             Every Cut Has Purpose.
           </h2>
-          <p className="font-sans font-light text-gray-400 text-lg">Watch our showreel and see how we bring brands to life.</p>
+          <p className="font-sans font-light text-zinc-400 text-lg">See how we bring brands to life.</p>
         </div>
 
         <div className="max-w-4xl mx-auto relative group">
           <div className="absolute -inset-1 bg-gradient-spectrum rounded-[20px] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-          <div className="relative bg-bg-alt rounded-[18px] overflow-hidden aspect-video border border-white/10">
-            <iframe 
-              src="https://player.vimeo.com/video/1175155329?badge=0&autopause=0&player_id=0&app_id=58479" 
-              className="absolute top-0 left-0 w-full h-full"
-              frameBorder="0" 
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
-              referrerPolicy="strict-origin-when-cross-origin" 
-              title="BrightCut Media Showreel 2026"
-            ></iframe>
+          <div className="relative bg-bg-alt rounded-[18px] overflow-hidden aspect-video border border-white/10 flex items-center justify-center bg-black cursor-pointer shadow-2xl">
+            
+            {isPlaying ? (
+              <iframe 
+                src="https://player.vimeo.com/video/1175155329?badge=0&autopause=0&autoplay=1" 
+                className="absolute top-0 left-0 w-full h-full"
+                frameBorder="0" 
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                title="BrightCut Media Showreel 2026"
+              ></iframe>
+            ) : (
+              <div 
+                className="absolute inset-0 w-full h-full group"
+                onClick={() => setIsPlaying(true)}
+              >
+                {/* Cinematic Wallpaper */}
+                <img 
+                  src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=80" 
+                  alt="BrightCut Showreel Preview" 
+                  className="w-full h-full object-cover opacity-60 scale-105 group-hover:scale-100 transition-all duration-700"
+                  referrerPolicy="no-referrer"
+                />
+                
+                {/* Visual Glass Filter overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-80"></div>
+
+                {/* Floating Centered Play Button */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div 
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative w-24 h-24 rounded-full flex items-center justify-center bg-white/10 border border-white/30 backdrop-blur-md shadow-[0_0_50px_rgba(6,182,212,0.3)] transition-all duration-300"
+                  >
+                    {/* Pulsing ring outer */}
+                    <div className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping opacity-75"></div>
+                    
+                    <Play size={32} className="text-white fill-white ml-2" />
+                  </motion.div>
+                </div>
+
+                {/* Info Overlay */}
+                <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-left">
+                  <span className="font-display font-bold text-[10px] tracking-widest text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full uppercase">
+                    Play Showreel
+                  </span>
+                  <h3 className="text-white font-display font-extrabold text-xl md:text-2xl mt-3 tracking-tight">
+                    BrightCut Media Cinematic Reel
+                  </h3>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-
-
       </div>
     </section>
   );
@@ -470,6 +632,9 @@ const Clients = () => {
     },
     {
       name: "Styled Africa"
+    },
+    {
+      name: "Nedbank"
     }
   ];
 
@@ -484,7 +649,7 @@ const Clients = () => {
   }, []);
 
   return (
-    <section id="clients" className="py-32 bg-bg relative overflow-hidden">
+    <section id="clients" className="py-32 md:py-44 bg-bg relative overflow-hidden">
       <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.03)_0,transparent_50%)]"></div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-20">
@@ -493,7 +658,7 @@ const Clients = () => {
           </div>
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white mb-6">Trusted by Industry Leaders</h2>
           <p className="font-sans text-zinc-400 text-lg">
-            We've had the privilege of collaborating with some of the most respected brands in the world. Click any featured brand to play their video showcase.
+            Collaborating with some of the world's most respected brands.
           </p>
         </div>
 
@@ -532,13 +697,6 @@ const Clients = () => {
               </motion.div>
             );
           })}
-        </div>
-
-        <div className="mt-20 p-12 rounded-[32px] border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent text-center">
-          <p className="font-display font-semibold italic text-zinc-500 text-lg mb-8">
-            "BrightCut Media consistently delivers high-end production value with a level of precision that is rare in the industry."
-          </p>
-          <div className="w-12 h-[2px] bg-gradient-spectrum mx-auto"></div>
         </div>
       </div>
 
@@ -628,7 +786,7 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-32 bg-bg relative overflow-hidden">
+    <section id="contact" className="py-32 md:py-44 bg-bg relative overflow-hidden">
       <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.05)_0,transparent_50%)]"></div>
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-[1.5fr_1fr] gap-16 relative z-10">
         <div>
@@ -636,7 +794,7 @@ const Contact = () => {
             <span className="font-display font-semibold text-[10px] tracking-widest text-gradient uppercase">Let's Work Together</span>
           </div>
           <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white mb-6">Start Your Project</h2>
-          <p className="font-sans text-zinc-400 text-lg mb-12">Based in Johannesburg. Available worldwide. Let's discuss how BrightCut Media can bring your brand story to life.</p>
+          <p className="font-sans text-zinc-400 text-lg mb-12">Based in Johannesburg. Available worldwide.</p>
 
           <div className="glass-card rounded-[32px] p-8 md:p-12 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-spectrum"></div>
@@ -775,7 +933,7 @@ const Footer = () => {
 
           <div className="md:text-right flex flex-col justify-between">
             <div>
-              <p className="text-zinc-500 text-sm mb-2">© 2025 BrightCut Media. All rights reserved.</p>
+              <p className="text-zinc-500 text-sm mb-2">© 2026 BrightCut Media. All rights reserved.</p>
               <a href="mailto:hello@brightcut.media" className="text-zinc-400 text-xs hover:text-white transition-colors block mb-2">hello@brightcut.media</a>
               <p className="text-zinc-700 text-xs uppercase tracking-widest">Johannesburg, South Africa</p>
             </div>
